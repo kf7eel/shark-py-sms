@@ -3,6 +3,8 @@
 ----
 
 Place these files in the same folder as the shark-py files. shark-py must be the version here (https://github.com/kf7eel/shark-py) to work these scripts.
+This will work with Openspot firmware 0101 or later as all versions after 0101 use JSON Web Tokens.
+
 
 ----
 
