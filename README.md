@@ -12,9 +12,9 @@ This will work with Openspot firmware 0101 or later as all versions after 0101 u
 This is the main script and contains all the core functionality. (It runs in a loop, so there is no need for a scheduled cron job.)
 
 ----
-### Current Status
+### Current Status - 11/29/2019
 
-Just upload initial script,still a little buggy.
+Just upload initial script, still a little buggy.
 
 Upon starting sms-interact.py, script will check Openspot for a new message, then it process any received SMS for a command.
 Next, it will check for any new email, send any emails in Inbox to DMR radios, before waiting 5 seconds to repeat.
