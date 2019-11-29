@@ -14,9 +14,9 @@ from email.header import decode_header
 
 #--------------------------------------------------------#
 # User, Password, and smtp server of your email account. #
-email_user = 'radio@u53.us'                              #
-email_password = 'DMRRadio19'                            #
-email_server = 'mail.u53.us'                             #
+email_user = 'email user  '                              #
+email_password = 'Password  '                            #
+email_server = 'Mail server'                             #
 smtp_port = 465                                          #
 pop_port = 995                                           #
 #--------------------------------------------------------#
