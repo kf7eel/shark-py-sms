@@ -199,6 +199,6 @@ while 1 < 5:
     print(time.strftime('%H:%M:%S - %d/%m/%Y'))
     sms_get()
     sms_read()
-    get_email()
     main()
+    get_email()
     time.sleep(5)
