@@ -51,6 +51,11 @@ Future possible features:
 
 * Some sort of XMPP implimentation.
 
+#### TODO
+
+* Finish cleaning up email functions.
+* Start coding APRS messaging functionality using APRS lib.
+
 ----
 ### Requirements
 
