@@ -44,12 +44,15 @@ This script should also theoretically respond to SMS sent from the DMR network, 
 
 Currently working on implementing:
 
-* APRS messaging functionality
+* APRS messaging functionality 
+12/2/2019 - Sucessfully filtering packets from specific callsigns. Next, need to filter packet further for processing...
+
 * Commands to control Openspot
 
 Future possible features:
 
 * Some sort of XMPP implimentation.
+* Have any ideas?
 
 #### TODO
 
@@ -90,6 +93,11 @@ You should be set.
 ----
 
 ### noaa.py - NWS Weather Alert to SMS
+
+### Broken in Python 3.7... 
+Appears to be an issue with the required module, will work on later...
+
+
 This script will check for moderate, severe, or extreme weather alerts and send them to the configured sms receiver.
 Setting this up to send to a talk group will allow multiple users to receive severe weather alerts.
 
