@@ -45,6 +45,7 @@ This script should also theoretically respond to SMS sent from the DMR network, 
 Currently working on implementing:
 
 * APRS messaging functionality 
+
 12/2/2019 - Sucessfully filtering packets from specific callsigns. Next, need to filter packet further for processing...
 
 * Commands to control Openspot
