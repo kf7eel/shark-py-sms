@@ -1,4 +1,4 @@
-# shark-py-sms
+# Introduction
 
 ----
 
@@ -35,7 +35,7 @@ This is due to an issue with the Anytone D878 used during testing. Sometimes the
 This script should also theoretically respond to SMS sent from the DMR network, however, I only have 1 hotspot and have not been able to test this. Will fully impliment response to network SMS in the future. At present, this capability is "half implimented."
 
 
-#### Features
+# Features
 
 * SMS to E-Mail
 * E-Mail to SMS
@@ -61,7 +61,21 @@ Future possible features:
 * Start coding APRS messaging functionality using APRS lib.
 
 ----
-### Requirements
+
+# Commands
+
+Commands are in CAPS.
+
+* HELP - displays help message
+* ECHO - replies eniter message back to user'
+* TIME - current local time
+* UPTIME - uptime of host system
+* PING - replies with pong
+* ID - returns your DMR ID
+* If "TO-" and "@" are in message, will send email to address.
+
+----
+# Requirements
 
 First and formost, my modified shark-py "library" is required. I took the shark-py code, originally published by battlehax (https://github.com/battlehax/shark-py), and updated the authentication mechanism to support JSON Web Tokens, as Openspot firmware 0101 and later requires this to use the Shark API. I have also updated some of the code to make it compatable with Python 3.7. #### *Find it at https://github.com/kf7eel/shark-py .
 
