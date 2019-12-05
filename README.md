@@ -75,6 +75,8 @@ which should be included on any modern Linux distrobution.
 The source id under the DMR SMS page must match the "hotspot_id" in shark.py.
 SMS messages must be sent to that DMR ID, private SMS.
 
+"tdma_channel" in shark.py must match the DMO channel in the connectors page, and the TDMA channel to which the openspot sends traffic to the network. TDMA channel = slot.
+
 ----
 ### Installation
 
