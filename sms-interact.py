@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3.7
 
 # Interactive SMS script, version "1.0", by Eric, KF7EEL
 # https://github.com/kf7eel/shark-py-sms
@@ -15,8 +15,8 @@ from email.header import decode_header
 #--------------------------------------------------------#
 # User, Password, and smtp server of your email account. #
 email_user = 'email user  '                              #
-email_password = 'Password  '                            #
-email_server = 'Mail server'                             #
+email_password = 'email user pass  '                     #
+email_server = 'email servr'                             #
 smtp_port = 465                                          #
 pop_port = 995                                           #
 #--------------------------------------------------------#
@@ -42,8 +42,8 @@ sms_modem = "1"
 data = None
 
 def sms_get():
-    print("Checking for authorization...")
-    shark.do_checkauth()
+    #print("Checking for authorization...")
+    #shark.do_checkauth()
     print("Fetching SMS")
     shark.do_recieve_sms()
 
@@ -165,7 +165,7 @@ def main():
 # Returns time and date of host, in UTC?
     if 'TIME' + line_break == sms_message:
             print('Getting time...')
-            current_time = time.strftime('%H:%M %A %B, %Y - Timezone: %z')
+            current_time = time.strftime('%H:%M %A %B %d, %Y - Timezone: %z')
             reply_sms(current_time)
             
 # Sends email via configured SMTP server, SMS must begin with "TO-" and have email address
@@ -194,9 +194,10 @@ def main():
             print("Nothing received or recognized.")
             print("Restarting after 5 seconds...")
 
-
+shark.do_login()
 while 1 < 5:
-    print(time.strftime('%H:%M:%S - %d/%m/%Y'))
+    print(time.strftime('%H:%M:%S - %m/%d/%Y'))
+    shark.do_checkauth()
     sms_get()
     sms_read()
     main()
