@@ -80,7 +80,36 @@ SMS messages must be sent to that DMR ID, private SMS.
 
 Download this repository into the same folder as shark-py, found at https://github.com/kf7eel/shark-py.
 
-Install all necessary python modules.
+1. Create folder for shark-py-sms
+''''
+mkdir shark-py-sms
+''''
+
+2. Download the modified shark-py, found at https://github.com/kf7eel/shark-py.
+''''
+git clone https://github.com/kf7eel/shark-py.git shark-py-sms/
+''''
+
+3. Download shark-py-sms.
+''''
+git clone https://github.com/kf7eel/shark-py-sms.git py-sms
+''''
+
+4. Move shark-py-sms files into same folder as shark-py.
+''''
+cp -r py-sms/* shark-py-sms/
+''''
+
+5. Open shark.py and edit neseccary lines: "ip", "passwrd", and "hotspot_id" to match your Openspot.
+
+6. Open and modify sms-interact.py to match your email account and other settings.
+
+7. Run:
+''''
+python3.7 sms-interact.py
+''''
+
+Install all necessary python modules if it omplains about import errors.
 
 That should be it.
 
