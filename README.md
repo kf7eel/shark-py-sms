@@ -70,6 +70,11 @@ re, binascii, shark, time, os, datetime, smtplib, email, poplib
 
 which should be included on any modern Linux distrobution.
 
+### Openspot setup
+
+The source id under the DMR SMS page must match the "hotspot_id" in shark.py.
+SMS messages must be sent to that DMR ID, private SMS.
+
 ----
 ### Installation
 
