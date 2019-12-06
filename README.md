@@ -12,7 +12,11 @@ This will work with Openspot firmware 0101 or later as all versions after 0101 u
 This is the main script and contains all the core functionality. (It runs in a loop, so there is no need for a scheduled cron job.)
 
 ----
-### Current Status - 11/29/2019
+### Current Status - 12/5/2019
+
+Just uploaded "Version 1.1". This contains alot of bug fixes, a restructuring of the code, and implemented APRS to DMR SMS functionality, complete with APRS ack of message. Current installation instructions may need some changinging. Hopefully someone will find this usefull. Next up, DMR SMS to APRS message.
+
+#### 11/29/2019
 
 Just upload initial script, still a little buggy.
 
@@ -39,20 +43,23 @@ This script should also theoretically respond to SMS sent from the DMR network, 
 
 * SMS to E-Mail
 * E-Mail to SMS
+* APRS to DMR SMS gateway (12/5/2019) 
 * Current Time
-* Echo SMS back to user
+* Several minor commands
 
 Currently working on implementing:
 
-* APRS messaging functionality 
-
+* DMR SMS to APRS 
+12/5/2019 - Sucessfully implimented APRS to DMR SMS.
 12/2/2019 - Sucessfully filtering packets from specific callsigns. Next, need to filter packet further for processing...
 
 * Commands to control Openspot
+12/5/2019 - Not yet started...
 
 Future possible features:
 
 * Some sort of XMPP implimentation.
+* METAR info
 * Have any ideas?
 
 #### TODO
