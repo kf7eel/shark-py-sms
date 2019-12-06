@@ -20,36 +20,25 @@
 
 # Version "1.0", by Eric, KF7EEL
 
-# Interactive SMS script. 
+# Timed APRS beacon script. 
 # https://github.com/kf7eel/shark-py-sms
 
 # Feel free to modify and improve.
 
 from functions_v1 import *
 
-shark.do_login()
+# Connect ot APRS-IS
+AIS.connect()
+
+aprs_beacon_1()
+
+
+# Statr loop
 while 1 < 5:
-    print('\n')
-    print(time.strftime('%H:%M:%S - %m/%d/%Y'))
-    shark.do_checkauth()
-    sms_get()
-    sms_read()
-    main()
-    time.sleep(5)
-    sms_get()
-    sms_read()
-    main()
-    time.sleep(5)
-    sms_get()
-    sms_read()
-    main()
-    sms_get()
-    sms_read()
-    main()
-    time.sleep(5)
-    sms_get()
-    sms_read()
-    main()
-    print('Checking E-Mail')
-    get_email()
-    time.sleep(5)
+    aprs_location()
+    time.sleep(900) #15 minutes
+    aprs_beacon_1()
+    time.sleep(900) #15 minutes
+    aprs_beacon_2()
+
+    

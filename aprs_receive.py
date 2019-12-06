@@ -20,36 +20,21 @@
 
 # Version "1.0", by Eric, KF7EEL
 
-# Interactive SMS script. 
+# Interactive APRS script. 
 # https://github.com/kf7eel/shark-py-sms
 
 # Feel free to modify and improve.
 
 from functions_v1 import *
 
-shark.do_login()
-while 1 < 5:
-    print('\n')
-    print(time.strftime('%H:%M:%S - %m/%d/%Y'))
-    shark.do_checkauth()
-    sms_get()
-    sms_read()
-    main()
-    time.sleep(5)
-    sms_get()
-    sms_read()
-    main()
-    time.sleep(5)
-    sms_get()
-    sms_read()
-    main()
-    sms_get()
-    sms_read()
-    main()
-    time.sleep(5)
-    sms_get()
-    sms_read()
-    main()
-    print('Checking E-Mail')
-    get_email()
-    time.sleep(5)
+AIS = aprslib.IS(hotspot_callsign, passwd=aprs_passcode, port=14580)
+#print(hotspot_callsign + '>APRS,TCPIP*:' + '=' + latitude + '/' + longitude + '</A' + altitude + ' ' + aprs_comment)
+
+AIS.set_filter(aprs_filter)
+AIS.connect()
+
+#print(location_packet)
+#AIS.sendall(location_packet)
+
+AIS.consumer(aprs_receive_loop, raw=True)
+
