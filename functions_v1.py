@@ -278,6 +278,16 @@ def main():
                         
                     else:
                         print("TO- in message, no @, not sending email")
+    if 'A-' in sms_message:
+        for ai in sms_message.split():
+                    if ai.startswith("A-"):
+                        #print(i)
+                        aprs_dest = ai.replace("A-", "")
+                        print("APRS Destination: " + aprs_dest)
+                        aprs_msg_body = sms_message.replace("A-" + aprs_dest, "")
+                        print("APRS Message: " + aprs_msg_body)
+                        print("Sending APRS message via APRS-IS")
+                        aprs_send_msg(aprs_dest, aprs_msg_body.strip('\n'))
     else:
             print("Nothing received or recognized.")
             print("Exiting main()")
@@ -285,14 +295,53 @@ def main():
 
 #############################################----APRS Functions----#############
 
+global AIS, aprs_message_packet
+
+aprs_message_packet = None
+
 AIS = aprslib.IS(hotspot_callsign, passwd=aprs_passcode, port=14580)
 
 def aprs_ack():
-    print(hotspot_callsign + '>APRS,TCPIP*:' + ':' + parse_packet['from'] +': ack'+parse_packet['msgNo'])
+    global AIS
     print('Send ACK')
     time.sleep(1)
+    print('Connecting to APRS-IS')
+    AIS.connect()
+    time.sleep(1)
+    print('Sending...')
     AIS.sendall(hotspot_callsign + '>APRS,TCPIP*:' + ':' + parse_packet['from'] +' :ack'+parse_packet['msgNo'])
+    print(hotspot_callsign + '>APRS,TCPIP*:' + ':' + parse_packet['from'] +': ack'+parse_packet['msgNo'])
+    time.sleep(1)
+    #AIS.close()
+    #time.sleep(1)
 
+def aprs_send_msg(aprs_to, aprs_message_text):
+    global aprs_message_packet
+    #print(aprs_to)
+    #print(aprs_message_text.strip('\n'))
+    #b_msg_num = len(aprs_message_text)
+    aprs_message_number = str(len(aprs_message_text))
+    if len(aprs_to) < 9: 
+        aprs_to_spaces = aprs_to.ljust(9)
+    if len(aprs_to) == 9:
+        aprs_to_spaces = aprs_to
+    else:
+        print('greater than 9')
+        aprs_to_spaces = aprs_to.ljust(9)
+    aprs_message_packet = hotspot_callsign + '>APRS,TCPIP*:' + ':' + aprs_to_spaces +':'+ aprs_message_text + '{' + aprs_message_number
+    #print(aprs_to_spaces)
+    print('Connecting to APRS-IS')
+    AIS.connect()
+    time.sleep(1)
+    print('Sending...')
+    AIS.sendall(aprs_message_packet)
+    print(aprs_message_packet)
+    #time.sleep(1)
+    #AIS.close()
+                      
+    
+
+    
 def aprs_location():
     location_packet = hotspot_callsign + '>APRS,TCPIP*:' + '=' + latitude + '/' + longitude + aprs_symbol + aprs_symbol_table + 'A=' + altitude + ' ' + aprs_comment
     print('Sending location packet.')
@@ -312,7 +361,7 @@ def aprs_beacon_2():
     AIS.sendall(beacon_2_packet)
 
 def aprs_receive_loop(packet):
-        global parse_packet
+        global parse_packet, aprs_message_packet, AIS
         # convert bytes to utf-8 string, ignore errors from non utf-8 bytes
         pak_str = packet.decode('utf-8',errors='ignore').strip()
         # Parse packet into dictionary
@@ -325,15 +374,43 @@ def aprs_receive_loop(packet):
         if 'addresse' in parse_packet:
                 if 'message_text' in parse_packet:
                         if hotspot_callsign == parse_packet['addresse']:
-                            print(parse_packet['message_text'])
+                            #AIS.close()
+                            print('APRS message: ' + parse_packet['message_text'] + 'from: ' + parse_packet['from'])
                             aprs_ack()
+                            # "dirty" fix to use single connection to APRS-IS, just put code of ack function here
+                            #print('Send ACK')
+                            #time.sleep(1)
+                            #print('Connecting to APRS-IS')
+                            #AIS.connect()
+                            #time.sleep(1)
+                            #print('Sending...')
+                            #AIS.connect()
+                            #AIS.sendall(hotspot_callsign + '>APRS,TCPIP*:' + ':' + parse_packet['from'] +' :ack'+parse_packet['msgNo'])
+                            #print(hotspot_callsign + '>APRS,TCPIP*:' + ':' + parse_packet['from'] +': ack'+parse_packet['msgNo'])
+                            #time.sleep(1)
+                          ############################################
                             # Send message to DMR SMS
+                            print(time.strftime('%H:%M:%S - %m/%d/%Y'))
                             shark.do_send_sms('1', '2', '9', '1','APRS MSG from: ' + parse_packet['from'] + '. ' + parse_packet['message_text'])
+                            print('5 second reset')
+                            time.sleep(5)
+                            #AIS.connect()
+                            #dmr_sms_aprs_reply = 'APRS MSG from: ' + parse_packet['from'] + '. ' + parse_packet['message_text']
+                            #reply_sms(dmr_sms_aprs_reply)
+                            time.sleep(1)
+                            
                         else:
                                 print('Na')
                 else:
-                    print('Message for someone else...')
+                    print('Message from: ' + parse_packet['from'] + ' To: ' + parse_packet['addresse'])
+        #if aprs_message_packet != None:
+        #    time.sleep(1)
+         #   print('Sending...')
+         #   AIS.sendall(aprs_message_packet)
+         #   aprs_message_packet = None
         else:
             print('Packet from: ' + parse_packet['from'])
+            #print(aprs_message_packet)
+
 
     #################################################
