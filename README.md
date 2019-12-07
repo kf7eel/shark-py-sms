@@ -12,7 +12,13 @@ This will work with Openspot firmware 0101 or later as all versions after 0101 u
 This is the main script and contains all the core functionality. (It runs in a loop, so there is no need for a scheduled cron job.)
 
 ----
-### Current Status - 12/5/2019
+### Current Status - 12/6/2019
+
+Just implimented DMR SMS to APRS gateway. Any DMR SMS that contains "A-" will be routed to APRS.
+"A-" must contain APRS station, including. Example: "A-N0CALL-5 This is a test message." This will send an APRS message to N0CALL-5 (fiticious call) with a message of "This is a test message."
+
+
+#### 12/5/2019
 
 Just uploaded "Version 1.1". This contains alot of bug fixes, a restructuring of the code, and implemented APRS to DMR SMS functionality, complete with APRS ack of message. Current installation instructions may need some changinging. Hopefully someone will find this usefull. Next up, DMR SMS to APRS message.
 
@@ -44,6 +50,7 @@ This script should also theoretically respond to SMS sent from the DMR network, 
 * SMS to E-Mail
 * E-Mail to SMS
 * APRS to DMR SMS gateway (12/5/2019) 
+* DMR SMS to APRS gateway (12/6/2019)
 * Current Time
 * Several minor commands
 
