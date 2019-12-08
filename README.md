@@ -109,6 +109,9 @@ SMS page appears to only send on slot 1.
 
 When using send-sms.py in example, and every thing configured for Slot 2, it appears that Openspot sends group SMS to network in MMDVM mode... Hmm, interesting...
 
+### Confirmed!
+The Openspot will send SMS via HBLink3. Sent a network SMS and observer MMDVM_Bridge receive packet.
+
 ----
 ### Installation
 
