@@ -107,7 +107,6 @@ will result in a DMR SMS, "Hello DMR SMS!", sent to talkgroup 9. (Will impliment
 
 `
 A-kf7eel-2 This is a test message.
-
 `
 
 will result in an APRS message sent to "KF7EEL-2" with message of "This is a test message."
