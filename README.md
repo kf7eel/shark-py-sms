@@ -97,7 +97,9 @@ Replies to the email gateway MUST have entire message in Subject line, the body 
 
 `
 To: (email account configured in script)
+
 Subject: Hello DMR SMS!
+
 Body: bla bla
 `
 
