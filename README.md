@@ -96,11 +96,13 @@ will result in an email to user@example.org with a body of "This is a test messa
 Replies to the email gateway MUST have entire message in Subject line, the body of the message is ignorred at this point. Example:
 
 `
+
 To: (email account configured in script)
 
 Subject: Hello DMR SMS!
 
 Body: bla bla
+
 `
 
 will result in a DMR SMS, "Hello DMR SMS!", sent to talkgroup 9. (Will impliment private SMS in near future.)
