@@ -80,13 +80,32 @@ Future possible features:
 
 Commands are in CAPS.
 
-* HELP - displays help message
-* ECHO - replies eniter message back to user'
+* HELP - displays help message, Returns in a series of 4 messages, use with caution
+* ECHO - replies eniter message back to user
 * TIME - current local time
 * UPTIME - uptime of host system
 * PING - replies with pong
 * ID - returns your DMR ID
-* If "TO-" and "@" are in message, will send email to address.
+* If "TO-" and "@" are in message, will send email to address. Example:
+`
+TO-user@example.org This is a test message.
+` 
+will result in an email to user@example.org with a body of "This is a test message.
+Replies to the email gateway MUST have entire message in Subject line, the body of the message is ignorred at this point. Example:
+`
+To: (email account configured in script)
+Subject: Hello DMR SMS!
+Body: bla bla
+`
+will result in a DMR SMS, "Hello DMR SMS!", sent to talkgroup 9. (Will impliment private SMS in near future.)
+
+* If "A-" is in message, will send APRS message to specified station. Must include APRS SSID. Example:
+`
+A-kf7eel-2 This is a test message.
+`
+will result in an APRS message sent to "KF7EEL-2" with message of "This is a test message."
+APRS replies will be sent to talkgroup 9, will impliment private DMR SMS shortly, just need to change a few lines of code...
+
 
 ----
 # Requirements
