@@ -138,47 +138,60 @@ When using send-sms.py in example, and every thing configured for Slot 2, it app
 The Openspot will send SMS via HBLink3. Sent a network SMS and observer MMDVM_Bridge receive packet.
 
 ----
-### Installation
+### Installation - updated 12/23/2019
 
 Download this repository into the same folder as shark-py, found at https://github.com/kf7eel/shark-py.
 
 1. Create folder for shark-py-sms
 
-`
-mkdir shark-py-sms
-`
 
-2. Download the modified shark-py, found at https://github.com/kf7eel/shark-py.
+`mkdir shark-py-sms`
 
-`
-git clone https://github.com/kf7eel/shark-py.git shark-py-sms/
-`
 
-3. Download shark-py-sms.
+2. Download shark-py-sms.
 
-`
-git clone https://github.com/kf7eel/shark-py-sms.git py-sms
-`
 
-4. Move shark-py-sms files into same folder as shark-py.
+`git clone https://github.com/kf7eel/shark-py-sms.git shark-py-sms`
 
-`
-cp -r py-sms/* shark-py-sms/
-`
 
-5. Open shark.py and edit neseccary lines: "ip", "passwrd", and "hotspot_id" to match your Openspot.
+3. Download the modified shark-py into shark-py-sms folder, found at https://github.com/kf7eel/shark-py.
 
-6. Open and modify sms-interact.py to match your email account and other settings.
 
-7. Run:
+`cd shark-py-sms`
 
-`
-python3.7 sms-interact.py
-`
+
+`wget https://raw.githubusercontent.com/kf7eel/shark-py/master/shark.py`
+
+
+5. Open shark.py and edit neseccary lines: "ip", "passwrd", and "hotspot_id" to match your Openspot, found at the top of the file.
+
+6. Open and modify sms-interact.py to match your email account and other settings. You will have to change the filter settings for APRS to work properly.
+
+7. Install required Python libraries using pip3.
+
+In Debian,
+
+`sudo apt install python3.7 pip3`
+
+`pip3 install aprslib`
+
+8. Run:
+
+
+`python3.7 sms-interact.py`
+
+Open another window or ssh session and run:
+
+`python3.7 aprs_receive.py`
+
+for APRS receiving functionality.
+
 
 Install all necessary python modules if it complains about import errors.
 
 That should be it.
+
+12/23/2019 - Tested this on a Raspberry Pi, Raspbian 10, and it is working fine.
 
 ----
 ### Configuration
