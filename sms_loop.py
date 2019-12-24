@@ -63,9 +63,13 @@ while 1 < 5:
     try:
         main_loop()
     except:
+        time.sleep(5)
+        print('Pausing for 5 seconds...')
         shark.do_login()
         main_loop()
     finally:
+        time.sleep(5)
+        print('Pausing for 5 seconds...')
         shark.do_login()
         main_loop()
 
