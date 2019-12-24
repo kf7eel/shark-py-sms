@@ -37,14 +37,22 @@ AIS.connect()
 #print(location_packet)
 #AIS.sendall(location_packet)
 
-while 1 < 6:
+n = 2
+iarl = 1
+while iarl < n:
     
     try:
+        print('Initialize')
         AIS.consumer(aprs_receive_loop, raw=True)
+        iarl += 1
     except:
+        print('Exception, reseting')
         AIS.connect()
         AIS.consumer(aprs_receive_loop, raw=True)
+        iarl = 2
     finally:
+        print('Exception, finally, restarting')
         AIS.connect()
         AIS.consumer(aprs_receive_loop, raw=True)
+        iarl = 2
 
