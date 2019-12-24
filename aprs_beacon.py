@@ -29,20 +29,44 @@ from functions_v1 import *
 
 beacon_time = 900 # Time in seconds, 15 minutes
 
-# Connect ot APRS-IS
-AIS.connect()
-
-aprs_beacon_1()
-
-
-# Statr loop
-while 1 < 5:
+def beacon_loop():
+    while 1 < 5:
     aprs_location()
     time.sleep(beacon_time) #15 minutes
     aprs_beacon_1()
     time.sleep(beacon_time) #15 minutes
     aprs_beacon_2()
     time.sleep(beacon_time) #15 minutes
+   
 
+# Connect ot APRS-IS
+AIS.connect()
+
+aprs_beacon_1()
+
+
+# Statr loop with exception handle
+
+n = 2
+iarl = 1
+while iarl < n:
+    try:
+        print('Initialize')
+        beacon_loop()
+        iarl += 1
+    except:
+        print('exception, reset')
+        time.sleep(2)
+        AIS.connect()
+        time.sleep(2)
+        beacon_loop()
+        iarl = 2
+    finally:
+        print('exception final, reset')
+        time.sleep(2)
+        AIS.connect()
+        time.sleep(2)
+        beacon_loop()
+        iarl = 2        
 
     
