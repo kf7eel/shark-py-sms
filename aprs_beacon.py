@@ -27,6 +27,8 @@
 
 from functions_v1 import *
 
+beacon_time = 900 # Time in seconds, 15 minutes
+
 # Connect ot APRS-IS
 AIS.connect()
 
@@ -36,9 +38,11 @@ aprs_beacon_1()
 # Statr loop
 while 1 < 5:
     aprs_location()
-    time.sleep(900) #15 minutes
+    time.sleep(beacon_time) #15 minutes
     aprs_beacon_1()
-    time.sleep(900) #15 minutes
+    time.sleep(beacon_time) #15 minutes
     aprs_beacon_2()
+    time.sleep(beacon_time) #15 minutes
+
 
     
