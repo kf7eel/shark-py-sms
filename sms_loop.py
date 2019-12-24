@@ -28,7 +28,12 @@
 from functions_v1 import *
 
 shark.do_login()
-while 1 < 5:
+
+#f_aprs_initialize = open(aprs_send_msg_file, 'w')
+#f_aprs_initialize.write('blank')
+#f_aprs_initialize.close
+
+def main_loop():
     print('\n')
     print(time.strftime('%H:%M:%S - %m/%d/%Y'))
     shark.do_checkauth()
@@ -53,3 +58,14 @@ while 1 < 5:
     print('Checking E-Mail')
     get_email()
     time.sleep(5)
+
+while 1 < 5:
+    try:
+        main_loop()
+    except:
+        shark.do_login()
+        main_loop()
+    finally:
+        shark.do_login()
+        main_loop()
+
