@@ -341,7 +341,7 @@ def aprs_receive_loop(packet):
          #   AIS.sendall(aprs_message_packet)
          #   aprs_message_packet = None
         else:
-            print('Packet from: ' + parse_packet['from'] + ' - ' + time.strftime('%H:%M:%S))
+            print('Packet from: ' + parse_packet['from'] + ' - ' + time.strftime('%H:%M:%S'))
             #print(aprs_message_packet)
 
 
