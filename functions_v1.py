@@ -375,7 +375,7 @@ def aprs_receive_loop(packet):
                 if 'message_text' in parse_packet:
                         if hotspot_callsign == parse_packet['addresse']:
                             #AIS.close()
-                            print('APRS message: ' + parse_packet['message_text'] + 'from: ' + parse_packet['from'])
+                            print('APRS message: ' + parse_packet['message_text'] + ' From: ' + parse_packet['from'])
                             aprs_ack()
                             # "dirty" fix to use single connection to APRS-IS, just put code of ack function here
                             #print('Send ACK')
@@ -409,7 +409,7 @@ def aprs_receive_loop(packet):
          #   AIS.sendall(aprs_message_packet)
          #   aprs_message_packet = None
         else:
-            print('Packet from: ' + parse_packet['from'])
+            print('Packet from: ' + parse_packet['from'] + ' - ' + time.strftime('%H:%M:%S))
             #print(aprs_message_packet)
 
 
