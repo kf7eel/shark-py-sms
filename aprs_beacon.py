@@ -31,12 +31,12 @@ beacon_time = 900 # Time in seconds, 15 minutes
 
 def beacon_loop():
     while 1 < 5:
-    aprs_location()
-    time.sleep(beacon_time) #15 minutes
-    aprs_beacon_1()
-    time.sleep(beacon_time) #15 minutes
-    aprs_beacon_2()
-    time.sleep(beacon_time) #15 minutes
+        aprs_location()
+        time.sleep(beacon_time) #15 minutes
+        aprs_beacon_1()
+        time.sleep(beacon_time) #15 minutes
+        aprs_beacon_2()
+        time.sleep(beacon_time) #15 minutes
    
 
 # Connect ot APRS-IS
