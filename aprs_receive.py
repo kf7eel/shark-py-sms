@@ -24,8 +24,9 @@
 # https://github.com/kf7eel/shark-py-sms
 
 # Feel free to modify and improve.
-
 from functions_v1 import *
+
+global AIS
 
 AIS = aprslib.IS(hotspot_callsign, passwd=aprs_passcode, port=14580)
 #print(hotspot_callsign + '>APRS,TCPIP*:' + '=' + latitude + '/' + longitude + '</A' + altitude + ' ' + aprs_comment)
@@ -36,5 +37,14 @@ AIS.connect()
 #print(location_packet)
 #AIS.sendall(location_packet)
 
-AIS.consumer(aprs_receive_loop, raw=True)
+while 1 < 6:
+    
+    try:
+        AIS.consumer(aprs_receive_loop, raw=True)
+    except:
+        AIS.connect()
+        AIS.consumer(aprs_receive_loop, raw=True)
+    finally:
+        AIS.connect()
+        AIS.consumer(aprs_receive_loop, raw=True)
 
