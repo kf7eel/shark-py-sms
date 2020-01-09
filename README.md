@@ -5,14 +5,20 @@
 Place these files in the same folder as the shark-py files. shark-py must be the version here (https://github.com/kf7eel/shark-py) to work these scripts.
 This will work with Openspot firmware 0101 or later as all versions after 0101 use JSON Web Tokens.
 
-
 ----
-### sms-interact.py
 
-This is the main script and contains all the core functionality. (It runs in a loop, so there is no need for a scheduled cron job.)
-
+# See Wiki for more info.
 ----
-### Current Status - 12/6/2019
+### - Current Status - 1/8/20
+Today I focused mostly on imporving the usability of the program. I added an exception handle to sms_loop for checking email, so if it fails, it won't stop the whole thing. This means now that an email account is no longer required. Also added to the configuration the option to enable or disable "network reply." This effectively makes the modem send SMS via RF only, and/or to network. A few changes in core.py and the shark.py library have allowed this.
+ 
+ Added an option in config.py to enable or disable "talkgroup reply." This will send all SMS replie to talkgroup 9, modem side only. Used primarily for testing. See below for details.
+ 
+I have modified the shark.py file in the other repository to work with an installation script to allow for a more seamless "experience" for the Openspot user. It is not fully complete, but work for installing the reqired file. Still working on a more complete installation script.
+
+I have acquired a Pi-Star hotspot, and have been able to test the program network capabilities. It works just fine over network. HBLink3 is serving as the "test network."
+
+#### 12/6/2019
 
 Just implimented DMR SMS to APRS gateway. Any DMR SMS that contains "A-" will be routed to APRS.
 "A-" must contain APRS station, including. Example: "A-N0CALL-5 This is a test message." This will send an APRS message to N0CALL-5 (fiticious call) with a message of "This is a test message."
@@ -71,8 +77,8 @@ Future possible features:
 
 #### TODO
 
-* Finish cleaning up email functions.
-* Start coding APRS messaging functionality using APRS lib.
+* Finish cleaning up email functions and code funtion for E-Mail --> Private DMR SMS.
+
 
 ----
 
@@ -123,7 +129,7 @@ re, binascii, shark, time, os, datetime, smtplib, email, poplib
 
 which should be included on any modern Linux distrobution.
 
-### Openspot setup
+### Openspot setup notes and thing I discovered
 
 The source id under the DMR SMS page must match the "hotspot_id" in shark.py.
 SMS messages must be sent to that DMR ID, private SMS.
@@ -136,74 +142,6 @@ When using send-sms.py in example, and every thing configured for Slot 2, it app
 
 ### Confirmed!
 The Openspot will send SMS through HBLink3. Sent a network SMS and observer MMDVM_Bridge receive packet.
-
-----
-### Installation - updated 12/23/2019
-
-Download this repository into the same folder as shark-py, found at https://github.com/kf7eel/shark-py.
-
-1. Create folder for shark-py-sms
-
-
-`mkdir shark-py-sms`
-
-
-2. Download shark-py-sms.
-
-
-`git clone https://github.com/kf7eel/shark-py-sms.git shark-py-sms`
-
-
-3. Download the modified shark-py into shark-py-sms folder, found at https://github.com/kf7eel/shark-py.
-
-
-`cd shark-py-sms`
-
-
-`wget https://raw.githubusercontent.com/kf7eel/shark-py/master/shark.py`
-
-
-5. Open shark.py and edit neseccary lines: "ip", "passwrd", and "hotspot_id" to match your Openspot, found at the top of the file.
-
-6. Open and modify sms-interact.py to match your email account and other settings. You will have to change the filter settings for APRS to work properly.
-
-7. Install required Python libraries using pip3.
-
-In Debian,
-
-`sudo apt install python3.7 pip3`
-
-`pip3 install aprslib`
-
-8. Run:
-
-
-`python3.7 sms-interact.py`
-
-Open another window or ssh session and run:
-
-`python3.7 aprs_receive.py`
-
-for APRS receiving functionality.
-
-
-Install all necessary python modules if it complains about import errors.
-
-That should be it.
-
-12/23/2019 - Tested this on a Raspberry Pi, Raspbian 10, and it is working fine.
-
-----
-### Configuration
-
-Find the section of code in the "box" near the top of sms-interact.py and change to your settings.
-
-Next, open shark.py and change the values, located near the top of the file, and fill in your Openspot ip address and password.
-
-Now run:
-python3.7 sms-interact.py.
-
-You should be set.
 
 ----
 
