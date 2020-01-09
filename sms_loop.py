@@ -25,8 +25,8 @@
 
 # Feel free to modify and improve.
 
-from functions_v1 import *
-
+from core import *
+#from shark import *
 shark.do_login()
 
 #f_aprs_initialize = open(aprs_send_msg_file, 'w')
@@ -56,7 +56,11 @@ def main_loop():
     sms_read()
     main()
     print('Checking E-Mail')
-    get_email()
+    try:
+        get_email()
+    except:
+        print('No configured account or an error occurred.')
+        pass
     time.sleep(5)
 
 while 1 < 5:
@@ -64,12 +68,12 @@ while 1 < 5:
         main_loop()
     except:
         time.sleep(5)
-        print('Pausing for 5 seconds...')
+        print('Exception - Pausing for 5 seconds...')
         shark.do_login()
         main_loop()
     finally:
         time.sleep(5)
-        print('Pausing for 5 seconds...')
+        print('Exception - Pausing for 5 seconds...')
         shark.do_login()
         main_loop()
 
