@@ -18,6 +18,8 @@ I have modified the shark.py file in the other repository to work with an instal
 
 I have acquired a Pi-Star hotspot, and have been able to test the program network capabilities. It works just fine over network. HBLink3 is serving as the "test network."
 
+Future implementations: User defined commands, persistent data storage for routing APRS, and APRS to email.
+
 #### 12/6/2019
 
 Just implimented DMR SMS to APRS gateway. Any DMR SMS that contains "A-" will be routed to APRS.
