@@ -18,9 +18,9 @@
 #   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 ###############################################################################
 
-# Version "1.1", by Eric, KF7EEL
+# Version "1.2", by Eric, KF7EEL
 
-# Contains all variables and functions for program
+# Contains all functions for program
 # APRS-IS receive script and required by Interactive SMS script. 
 # https://github.com/kf7eel/shark-py-sms
 
@@ -52,6 +52,7 @@ def sms_read():
         sms_format = data[1]
         sms_source = data[2]
         sms_message = data[3]
+        sms_modem = data[4]
         if sms_message == '\n':
             print("No SMS messages")
         else:
@@ -63,21 +64,26 @@ def sms_read():
             print("From: " + sms_source)
             print("Message: " + sms_message)
             print('\n' + "--------------------------------------" + '\n')
-
+            print("Sent from: (0 = network, 1 = modem): " + sms_modem)
+            print('\n' + "--------------------------------------" + '\n')
 
 def reply_sms(message):
-    global sms_type, sms_format, sms_source, sms_message, sms_modem
+    global sms_type, sms_format, sms_source, sms_modem, sms_message, network_reply_mode
     print('\n')
     print("Sending SMS reply...")
     print('\n')
     time.sleep(2)
-    #shark.do_send_sms(sms_type, sms_format, sms_source, sms_modem, message)
+    if talkgroup_reply_mode == 0:
+        shark.do_send_sms(sms_type, sms_format, sms_source, sms_modem, message)
     # For testing purposes, below is set to group SMS due to issues with AT-D878. o_ indicates override, see above
-    shark.do_send_sms(o_sms_type, o_sms_format, o_sms_source, sms_modem, message)
+    else:
+        shark.do_send_sms(o_sms_type, o_sms_format, o_sms_source, sms_modem, message)
     print("SMS type: " + sms_type)
     print("Format: " + sms_format)
     print("Source: " + sms_source)
     print("Message: " + message)
+    print('Modem/Network (0 = network, 1 = modem): ' + sms_modem)
+    print('Network Reply - 0 = off, 1 = on: ' + str(network_reply_mode))
         
 
 
@@ -139,6 +145,7 @@ def get_email():
                         print('Message: ' + dmr_email_msg)
                         print('\n')
                         print('Sending messages via SMS...')
+                        # Email to specific DMR ID not implimented yet, send to talkgroup 9
                         shark.do_send_sms(o_sms_type, o_sms_format, o_sms_source, sms_modem, dmr_email_msg)
                         print('Deleting message')
                         pop_server.dele(del_msg)
@@ -252,7 +259,8 @@ def aprs_send_msg(aprs_to, aprs_message_text):
     #print(aprs_to)
     #print(aprs_message_text.strip('\n'))
     #b_msg_num = len(aprs_message_text)
-    aprs_message_number = str(len(aprs_message_text))
+    # Generate message number by adding character count to number and dding current time in seconds. Dirty, but works.
+    aprs_message_number = str(len(aprs_message_text)) + time.strftime('%s')
     if len(aprs_to) < 9: 
         aprs_to_spaces = aprs_to.ljust(9)
     if len(aprs_to) == 9:
