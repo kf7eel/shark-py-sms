@@ -18,10 +18,9 @@
 #   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 ###############################################################################
 
-# Version "1.1", by Eric, KF7EEL
+# Version "1.2", by Eric, KF7EEL
 
 # Contains all variables and functions for program
-# APRS-IS receive script and required by Interactive SMS script. 
 # https://github.com/kf7eel/shark-py-sms
 
 # Feel free to modify and improve.
@@ -31,9 +30,29 @@
 #CONFIGURATION VARIABLES
 ###############################################################################
 
+# Openspot IP and password
+ip = 'IP ADDRESS'
+password = 'openspot'
+hotspot_id = '1234'
+
+# Enables or disables replies to network, 1 is enabled, 0 is disabled
+# Must login to openspot and tick box in DMR SMS page, "Intercept network messages", then click save
+# Or send sms to modem. Network reply is only send to openspot when script needs to send an SMS message.
+
+# Disabled by default
+network_reply_mode = 0
+
+# Enables or disables sending replies to talkgroup 9. If off, replies will go to sender via private SMS
+# If on, replies will to to talkgroup 9
+talkgroup_reply_mode = 0
+
+# Determines if openspot will process SMS from network, sent to hotspot_id
+incoming_network_messages = network_reply_mode
+
+
 #############################----APRS----######################################
 # Callsign and SSID
-hotspot_callsign = 'Insert your Callsign'
+hotspot_callsign = 'Insert your Callsign with SSID (EXAMPLE: NC0ALL-10'
 
 # APRS-IS passcode
 aprs_passcode = 'APRS Passcode'
@@ -90,7 +109,7 @@ sms_type =  None #"1"
 sms_format = None #"2"
 sms_source = None #"9"
 sms_message = None
-sms_modem = "1"
+sms_modem = None
 data = None
 
 ################################################################################
