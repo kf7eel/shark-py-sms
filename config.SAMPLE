@@ -18,7 +18,7 @@
 #   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 ###############################################################################
 
-# Version "1.2", by Eric, KF7EEL
+# Version "1.2.1", by Eric, KF7EEL
 
 # Contains all variables and functions for program
 # https://github.com/kf7eel/shark-py-sms
@@ -49,10 +49,13 @@ talkgroup_reply_mode = 0
 # Determines if openspot will process SMS from network, sent to hotspot_id
 incoming_network_messages = network_reply_mode
 
+# Talk group SMS. Set this to send a message to a talk group. Used in tg_sms function.
+tg_sms = '9'
+
 
 #############################----APRS----######################################
 # Callsign and SSID
-hotspot_callsign = 'Insert your Callsign with SSID (EXAMPLE: NC0ALL-10'
+hotspot_callsign = 'Insert your Callsign with SSID (EXAMPLE: N0CALL-10'
 
 # APRS-IS passcode
 aprs_passcode = 'APRS Passcode'
@@ -95,10 +98,11 @@ pop_port = 995
 # Override variables, used in reply function to override the default of replying to what was received.
 # Use these to specify all replies to a talkgroup for axample. Some radios will not send ACK
 # packet in correct time, resulting in a million messages from the modem.
-o_sms_type =  "1"
-o_sms_format = "2"
-o_sms_source = "9"
+o_sms_type =  "1" # Group
+o_sms_format = "2" # UDP/Chinese
+o_sms_source = "9" # Talkgroup 9
 o_sms_message = None
+o_sms_modem = "1"
 
 # Line break variable, used to sort for exact strings. Used variable to mkae code look pretty.
 line_break = '\n'
@@ -112,4 +116,6 @@ sms_message = None
 sms_modem = None
 data = None
 
+# Map file for routing DMR ID andAPRS SMS
+map_csv = 'aprs_to_dmr_map.csv'
 ################################################################################
