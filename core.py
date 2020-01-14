@@ -18,7 +18,7 @@
 #   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 ###############################################################################
 
-# Version "1.2", by Eric, KF7EEL
+# Version "1.2.1", by Eric, KF7EEL
 
 # Contains all functions for program
 # APRS-IS receive script and required by Interactive SMS script. 
@@ -29,11 +29,18 @@
 # Import modules
 # DMR SMS
 from config import *
-import re, binascii, shark, time, os, datetime, smtplib
+from user_commands import *
+from system_commands import *
+from dmr_to_aprs_map import *
+#from user_functions import *
+import user_functions
+import system_commands
+import re, binascii, shark, time, os, datetime, smtplib, random
 import email, poplib
 from email.header import decode_header
 # APRS
 import aprslib, logging
+import csv
 
 ########################----DMR SMS Functions---#################################
 
@@ -65,6 +72,10 @@ def sms_read():
             print("Message: " + sms_message)
             print('\n' + "--------------------------------------" + '\n')
             print("Sent from: (0 = network, 1 = modem): " + sms_modem)
+            if sms_modem == '0':
+                print('Network')
+            if sms_modem == '1':
+                print('RF Modem')
             print('\n' + "--------------------------------------" + '\n')
 
 def reply_sms(message):
@@ -83,9 +94,24 @@ def reply_sms(message):
     print("Source: " + sms_source)
     print("Message: " + message)
     print('Modem/Network (0 = network, 1 = modem): ' + sms_modem)
-    print('Network Reply - 0 = off, 1 = on: ' + str(network_reply_mode))
+    if sms_modem == 0:
+        print('Network')
+    if sms_modem == 1:
+        print('RF Modem')
+    #print('Network Reply - 0 = off, 1 = on: ' + str(network_reply_mode))
+    if str(network_reply_mode) == '0':
+        print('Network reply disabled.')
+    if str(network_reply_mode) == '1':
+        print('Network reply enabled.')
         
 
+
+def tg_sms(message):
+    global tg_sms
+    print('Sending SMS to talkgroup ' + tg_sms)
+    time.sleep(1)
+    shark.do_send_sms(o_sms_type, o_sms_format, tg_sms, o_sms_modem, message)
+    
 
 def email_send(to_email, email_body):
     sent_from = email_user
@@ -156,46 +182,8 @@ def main():
     global data, sms_type, sms_format, sms_source, sms_message, sms_modem
     # Commands are here
     # line_break vairable used due to how string processed in python, defined above
-# Returns uptime of host    
-    if 'UPTIME' + line_break == sms_message:
-            print('Getting uptime...')
-            uptime = os.popen('uptime').read()
-            reply_sms(str(uptime))
-# Replies the SMS sent anytime ECHO is in SMS
-    if 'ECHO' in sms_message:
-            reply_sms(sms_message)
-            print("Echoing SMS")
-# Returns time and date of host, in UTC?
-    if 'TIME' + line_break == sms_message:
-            print('Getting time...')
-            current_time = time.strftime('%H:%M %A %B %d, %Y - Timezone: %z')
-            reply_sms(current_time)
-    if 'PING' + line_break == sms_message:
-        print("Received ping...")
-        time.sleep(0.5)
-        print("Pong")
-        reply_sms('Pong '+time.strftime('%H:%M:%S - %m/%d/%Y'))
-    if 'ID' + line_break == sms_message:
-        print('DMR ID: '+ sms_source)
-        reply_sms('Your DMR ID is ' + sms_source)
-    if 'HELP' + line_break == sms_message:
-        print('\n' + "--------------------------------------" + '\n')
-        print('Here are the available commands: ')
-        print('\n')
-        print('HELP - prints current message')
-        print('ECHO - replies eniter message back to user')
-        print('TIME - current local time')
-        print('UPTIME - uptime of host system')
-        print('PING - replies with pong')
-        print('ID - returns your DMR ID')
-        print('If "TO-" and "@" are in message, will send email to address.')
-        print('\n' + "--------------------------------------" + '\n')
-        reply_sms('1 of 4. All commands are in CAPS. ECHO - replies entier message back to user.')
-        reply_sms('2 of 4. TIME - current local time. UPTIME - uptime of host system.')
-        reply_sms('3 of 4. PING - replies with pong. ID - returns your DMR ID.')
-        reply_sms(' 4 of 4. If "TO-" and "@" are in message, will send email to address')
 
-# Sends email via configured SMTP server, SMS must begin with "TO-" and have email address
+ # Sends email via configured SMTP server, SMS must begin with "TO-" and have email address
 # attached with no space. The rest of the message is sent in the email body.
 # (example "TO-user@example.org This is a test." will result in an email to user@example.org containing
 # "TO-user@example.org This is a test." in the body.
@@ -217,6 +205,17 @@ def main():
                         
                     else:
                         print("TO- in message, no @, not sending email")
+
+                
+# Look for command in dictionary, user defined
+    else:
+        for key in cmd_list:
+            if key + line_break == sms_message:
+                print('User defined command: ')
+                print(cmd_list[key])
+                cmd_list[key]()
+                return
+
     if 'A-' in sms_message:
         for ai in sms_message.split():
                     if ai.startswith("A-"):
@@ -226,11 +225,24 @@ def main():
                         aprs_msg_body = sms_message.replace("A-" + aprs_dest, "")
                         print("APRS Message: " + aprs_msg_body)
                         print("Sending APRS message via APRS-IS")
-                        aprs_send_msg(aprs_dest, aprs_msg_body.strip('\n'))
+                        #aprs_send_msg(aprs_dest, aprs_msg_body.strip('\n'))
+                        dmr_to_aprs_send(aprs_dest, aprs_msg_body.strip('\n'))
     else:
             print("Nothing received or recognized.")
-            print("Exiting main()")
+            print("Loop reset")
 
+    if '!' + line_break == sms_message:
+        reply_sms('Unknown')
+# Look for command in dictionary, system commands
+    else:
+        for sys_key in sys_cmd_list:
+            if sys_key + line_break == sms_message:
+                print('System command: ')
+                print(sys_cmd_list[sys_key])
+                sys_cmd_list[sys_key]()
+                return
+            #else:
+            #    print('Command not defined')
 
 #############################################----APRS Functions----#############
 
@@ -240,15 +252,18 @@ aprs_message_packet = None
 
 AIS = aprslib.IS(hotspot_callsign, passwd=aprs_passcode, port=14580)
 
+AIS_send = aprslib.IS(hotspot_callsign, passwd=aprs_passcode, host='rotate.aprs2.net', port=14580)
+
+
 def aprs_ack():
     global AIS
     print('Send ACK')
     time.sleep(1)
     print('Connecting to APRS-IS')
-    AIS.connect()
+    AIS_send.connect()
     time.sleep(1)
     print('Sending...')
-    AIS.sendall(hotspot_callsign + '>APRS,TCPIP*:' + ':' + parse_packet['from'] +' :ack'+parse_packet['msgNo'])
+    AIS_send.sendall(hotspot_callsign + '>APRS,TCPIP*:' + ':' + parse_packet['from'] +' :ack'+parse_packet['msgNo'])
     print(hotspot_callsign + '>APRS,TCPIP*:' + ':' + parse_packet['from'] +': ack'+parse_packet['msgNo'])
     time.sleep(1)
     #AIS.close()
@@ -271,15 +286,58 @@ def aprs_send_msg(aprs_to, aprs_message_text):
     aprs_message_packet = hotspot_callsign + '>APRS,TCPIP*:' + ':' + aprs_to_spaces +':'+ aprs_message_text + '{' + aprs_message_number
     #print(aprs_to_spaces)
     print('Connecting to APRS-IS')
-    AIS.connect()
+    AIS_send.connect()
     time.sleep(1)
     print('Sending...')
-    AIS.sendall(aprs_message_packet)
+    AIS_send.sendall(aprs_message_packet)
     print(aprs_message_packet)
     #time.sleep(1)
     #AIS.close()
-                      
+
     
+def dmr_to_aprs_send(aprs_to, aprs_message_text):
+    global sms_source
+    aprs_message_number = str(random.randint(1,99)) + str(random.randint(1,9))
+    with open(map_csv, 'rt') as map_file:
+        map_send = csv.reader(map_file)
+        for map_line in map_send:
+            #print(map_line[1] + ' ' + sms_source)
+            #print(type(map_line[1]))
+            #print(type(sms_source))
+            if map_line[1] in sms_source:
+                    print('Found DMR ID in map.')
+                    if len(aprs_to) < 9:
+                        aprs_to_spaces = aprs_to.ljust(9)
+                    if len(aprs_to) == 9:
+                        aprs_to_spaces = aprs_to
+                    else:
+                        print('greater than 9, trimming to fit...')
+                        aprs_to_spaces = aprs_to.ljust(9)
+                    dmr_to_aprs_message_packet = map_line[0] + '>APRS,TCPIP*:' + ':' + aprs_to_spaces +':'+ aprs_message_text + '{' + aprs_message_number
+                    print('Connecting to APRS-IS')
+                    AIS_send.connect()
+                    time.sleep(1)
+                    print('Sending...')
+                    print(dmr_to_aprs_message_packet)
+                    AIS_send.sendall(dmr_to_aprs_message_packet)
+                    break
+        else:
+            if len(aprs_to) < 9: 
+                aprs_to_spaces = aprs_to.ljust(9)
+            if len(aprs_to) == 9:
+                aprs_to_spaces = aprs_to
+            else:
+                print('greater than 9')
+                aprs_to_spaces = aprs_to.ljust(9)
+                             #print(aprs_to_spaces)
+            print('Connecting to APRS-IS')
+            AIS_send.connect()
+            aprs_message_packet = hotspot_callsign + '>APRS,TCPIP*:' + ':' + aprs_to_spaces +':'+ aprs_message_text + '{' + aprs_message_number
+            time.sleep(1)
+            print('Sending...')
+            AIS_send.sendall(aprs_message_packet)
+            print(aprs_message_packet)
+
 
     
 def aprs_location():
@@ -301,56 +359,67 @@ def aprs_beacon_2():
     AIS.sendall(beacon_2_packet)
 
 def aprs_receive_loop(packet):
-        global parse_packet, aprs_message_packet, AIS
-        # convert bytes to utf-8 string, ignore errors from non utf-8 bytes
-        pak_str = packet.decode('utf-8',errors='ignore').strip()
-        # Parse packet into dictionary
-        parse_packet = aprslib.parse(pak_str)
+    global parse_packet, aprs_message_packet, AIS_send
+
         # Message ACK packet
         #aprs_msg_ack = hotspot_callsign + '>APRS,TCPIP*:' + ':' + parse_packet['from'] +':ack' + parse_packet['msgNo']
         # Retrieve value from dictionary key
         #print(par_pak['from'])
+#######
+        # convert bytes to utf-8 string, ignore errors from non utf-8 bytes
+    pak_str = packet.decode('utf-8',errors='ignore').strip()
+        # Parse packet into dictionary
+    parse_packet = aprslib.parse(pak_str)
+    with open(map_csv, 'rt') as map_file:
+            map_read = csv.reader(map_file)
+######
+            if 'addresse' in parse_packet:
+                   if 'message_text' in parse_packet:
+                            for map_line in map_read:
+                                if map_line[0] == parse_packet['addresse']:
+                                    print('yep')
+                                    print(map_line[0])
+                                    print('APRS message: ' + parse_packet['message_text'] + ' From: ' + parse_packet['from'] + 'To: ' + map_line[0])
+                                    # Begin ACK with APRS call of recipient
+                                    print('Send ACK')
+                                    time.sleep(1)
+                                    print('Connecting to APRS-IS')
+                                    AIS_send.connect()
+                                    time.sleep(1)
+                                    print('Sending...')
+                                    AIS_send.sendall(map_line[0] + '>APRS,TCPIP*:' + ':' + parse_packet['from'] +' :ack'+parse_packet['msgNo'])
+                                    print(map_line[0] + '>APRS,TCPIP*:' + ':' + parse_packet['from'] +': ack'+parse_packet['msgNo'])
+                                    ### End Ack
+                                    time.sleep(2)
+                                    print(time.strftime('%H:%M:%S - %m/%d/%Y'))
+                                    #set to send to network or modem in config
+                                    shark.do_send_sms('1', '2', '9', aprs_tg_network_reply,'APRS MSG from: ' + parse_packet['from'] + '. ' + parse_packet['message_text'])
+                                    print('5 second reset')
+                                    time.sleep(5)
 
-        if 'addresse' in parse_packet:
-                if 'message_text' in parse_packet:
-                        if hotspot_callsign == parse_packet['addresse']:
-                            #AIS.close()
-                            print('APRS message: ' + parse_packet['message_text'] + ' From: ' + parse_packet['from'])
-                            aprs_ack()
-                            # "dirty" fix to use single connection to APRS-IS, just put code of ack function here
-                            #print('Send ACK')
-                            #time.sleep(1)
-                            #print('Connecting to APRS-IS')
-                            #AIS.connect()
-                            #time.sleep(1)
-                            #print('Sending...')
-                            #AIS.connect()
-                            #AIS.sendall(hotspot_callsign + '>APRS,TCPIP*:' + ':' + parse_packet['from'] +' :ack'+parse_packet['msgNo'])
-                            #print(hotspot_callsign + '>APRS,TCPIP*:' + ':' + parse_packet['from'] +': ack'+parse_packet['msgNo'])
-                            #time.sleep(1)
-                          ############################################
+                            if hotspot_callsign == parse_packet['addresse']:
+                                print('APRS message: ' + parse_packet['message_text'] + ' From: ' + parse_packet['from'])
+                                aprs_ack()
                             # Send message to DMR SMS
-                            print(time.strftime('%H:%M:%S - %m/%d/%Y'))
-                            shark.do_send_sms('1', '2', '9', '1','APRS MSG from: ' + parse_packet['from'] + '. ' + parse_packet['message_text'])
-                            print('5 second reset')
-                            time.sleep(5)
+                                print(time.strftime('%H:%M:%S - %m/%d/%Y'))
+                                # send to network or modem defined in config
+                                shark.do_send_sms('1', '2', '9', aprs_tg_network_reply,'APRS MSG from: ' + parse_packet['from'] + '. ' + parse_packet['message_text'])
+                                print('5 second reset')
+                                time.sleep(5)
                             #AIS.connect()
                             #dmr_sms_aprs_reply = 'APRS MSG from: ' + parse_packet['from'] + '. ' + parse_packet['message_text']
                             #reply_sms(dmr_sms_aprs_reply)
-                            time.sleep(1)
+                                time.sleep(1)
                             
-                        else:
-                                print('Na')
-                else:
-                    print('Message from: ' + parse_packet['from'] + ' To: ' + parse_packet['addresse'])
-        #if aprs_message_packet != None:
-        #    time.sleep(1)
-         #   print('Sending...')
-         #   AIS.sendall(aprs_message_packet)
-         #   aprs_message_packet = None
-        else:
-            print('Packet from: ' + parse_packet['from'] + ' - ' + time.strftime('%H:%M:%S'))
+                            else:
+                                    print('...')
+                    #else:
+                     #   print('Message from: ' + parse_packet['from'] + ' To: ' + parse_packet['addresse'])
+
+            else:
+                print('Packet from: ' + parse_packet['from'] + ' - ' + time.strftime('%H:%M:%S'))
             #print(aprs_message_packet)
 
 
     #################################################
+
