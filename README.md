@@ -9,7 +9,10 @@ This will work with Openspot firmware 0101 or later as all versions after 0101 u
 
 # See Wiki for more info.
 ----
-### - Current Status - 1/8/20
+### Current Status - 1/13/20
+Getting ready to upload some major changes. I have been focusing on making this program more easily usable for other users in the last several days. Separated most system commands out of the core and into a function file and command file, allowing users to customize them. Have added a user defined command file set as well, will have documentation coming on that part soon, to make it easy for users to add custom commands. Also presently rewriting the APRS portion to allow APRS messgaes to DMR SMS and vice versa, to multiple APRS SSIDs. The idea is to compliment the analog APRS features of the Anytond D878. You will be able to set the APRS SSID in the program, and have APRS messages passed to a specified DMR ID!
+
+#### 1/8/10
 Today I focused mostly on imporving the usability of the program. I added an exception handle to sms_loop for checking email, so if it fails, it won't stop the whole thing. This means now that an email account is no longer required. Also added to the configuration the option to enable or disable "network reply." This effectively makes the modem send SMS via RF only, and/or to network. A few changes in core.py and the shark.py library have allowed this.
  
  Added an option in config.py to enable or disable "talkgroup reply." This will send all SMS replie to talkgroup 9, modem side only. Used primarily for testing. See below for details.
