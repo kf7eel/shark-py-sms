@@ -18,7 +18,7 @@
 #   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 ###############################################################################
 
-# Version "1.0", by Eric, KF7EEL
+# Version "1.2.1", by Eric, KF7EEL
 
 # Interactive SMS script. 
 # https://github.com/kf7eel/shark-py-sms
@@ -33,6 +33,8 @@ shark.do_login()
 #f_aprs_initialize.write('blank')
 #f_aprs_initialize.close
 
+print('shark-py-sms interactive DMR SMS scripts, by KF7EEL. Version 1.2.1')
+
 def main_loop():
     print('\n')
     print(time.strftime('%H:%M:%S - %m/%d/%Y'))
@@ -40,40 +42,20 @@ def main_loop():
     sms_get()
     sms_read()
     main()
-    time.sleep(5)
-    sms_get()
-    sms_read()
-    main()
-    time.sleep(5)
-    sms_get()
-    sms_read()
-    main()
-    sms_get()
-    sms_read()
-    main()
-    time.sleep(5)
-    sms_get()
-    sms_read()
-    main()
-    print('Checking E-Mail')
-    try:
-        get_email()
-    except:
-        print('No configured account or an error occurred.')
-        pass
-    time.sleep(5)
+    time.sleep(2)
 
-while 1 < 5:
+kill = 0
+
+while kill != 1:
     try:
-        main_loop()
+         main_loop()
     except:
         time.sleep(5)
-        print('Exception - Pausing for 5 seconds...')
+        print('Exception, Pausing for 5 seconds...')
         shark.do_login()
         main_loop()
     finally:
         time.sleep(5)
-        print('Exception - Pausing for 5 seconds...')
+        print('Final Exception, Pausing for 5 seconds...')
         shark.do_login()
         main_loop()
-
