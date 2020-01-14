@@ -31,7 +31,6 @@
 from config import *
 from user_commands import *
 from system_commands import *
-from dmr_to_aprs_map import *
 #from user_functions import *
 import user_functions
 import system_commands
