@@ -18,13 +18,13 @@
 #   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 ###############################################################################
 
-# Version "1.0", by Eric, KF7EEL
+# Version "1.2.1", by Eric, KF7EEL
 
 # Interactive APRS script. 
 # https://github.com/kf7eel/shark-py-sms
 
 # Feel free to modify and improve.
-from functions_v1 import *
+from core import *
 
 global AIS
 
@@ -36,6 +36,9 @@ AIS.connect()
 
 #print(location_packet)
 #AIS.sendall(location_packet)
+
+#AIS.consumer(aprs_receive_loop, raw=True)
+
 
 n = 2
 iarl = 1
