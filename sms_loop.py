@@ -47,15 +47,15 @@ def main_loop():
 kill = 0
 
 while kill != 1:
-    try:
-         main_loop()
-    except:
-        time.sleep(5)
-        print('Exception, Pausing for 5 seconds...')
-        shark.do_login()
-        main_loop()
-    finally:
-        time.sleep(5)
-        print('Final Exception, Pausing for 5 seconds...')
-        shark.do_login()
-        main_loop()
+#    try:
+     main_loop()
+#    except:
+#        time.sleep(5)
+#        print('Exception, Pausing for 5 seconds...')
+#        shark.do_login()
+#        main_loop()
+#    finally:
+#        time.sleep(5)
+#        print('Final Exception, Pausing for 5 seconds...')
+#        shark.do_login()
+#        main_loop()
