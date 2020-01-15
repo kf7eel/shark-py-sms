@@ -78,6 +78,9 @@ aprs_symbol = '-' # "House" symbol
 # Must change this to your QTH and change radius.
 aprs_filter = 'r/47/-120/100'
 
+# Sends APRS messages to TG 9, network or RF. 0 to enable, 1 to disable
+aprs_tg_network_reply = '0'
+
 
 # ! - fixed short format, = - message capable,
 
