@@ -58,12 +58,10 @@ This script should also theoretically respond to SMS sent from the DMR network, 
 
 # Features
 
-* SMS to E-Mail
-* E-Mail to SMS
-* APRS to DMR SMS gateway (12/5/2019) 
-* DMR SMS to APRS gateway (12/6/2019)
-* Current Time
-* Several minor commands
+* 2 way DMR to E-Mail gateway 
+* 2 way DMR to APRS messaging gateway
+* Several commands
+* User defined commands (work in progress)
 
 Currently working on implementing:
 
