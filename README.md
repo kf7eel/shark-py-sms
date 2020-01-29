@@ -2,14 +2,17 @@
 
 ----
 
-Place these files in the same folder as the shark-py files. shark-py must be the version here (https://github.com/kf7eel/shark-py) to work these scripts.
 This will work with Openspot firmware 0101 or later as all versions after 0101 use JSON Web Tokens.
 
 ----
 
 # See Wiki for more info.
 ----
-### Current Status - 1/13/20
+### 1/29/2020
+
+I managed to track down the original author of the python script that communicates via API. He gave me permission to include the script with this project. This will make it significantly easier to setup. Thanks to Scott, KD0KKV, the original author of the python API script that made this project possible (Original found at https://github.com/battlehax/shark-py).
+
+#### 1/13/20
 Getting ready to upload some major changes. I have been focusing on making this program more easily usable for other users in the last several days. Separated most system commands out of the core and into a function file and command file, allowing users to customize them. Have added a user defined command file set as well, will have documentation coming on that part soon, to make it easy for users to add custom commands. Also presently rewriting the APRS portion to allow APRS messgaes to DMR SMS and vice versa, to multiple APRS SSIDs. The idea is to compliment the analog APRS features of the Anytond D878. You will be able to set the APRS SSID in the program, and have APRS messages passed to a specified DMR ID!
 
 #### 1/8/10
