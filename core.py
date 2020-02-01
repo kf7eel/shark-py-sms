@@ -31,6 +31,7 @@
 from config import *
 from user_commands import *
 from system_commands import *
+#from dmr_to_aprs_map import *
 #from user_functions import *
 import user_functions
 import system_commands
@@ -262,10 +263,11 @@ def aprs_ack():
     AIS_send.connect()
     time.sleep(1)
     print('Sending...')
-    AIS_send.sendall(hotspot_callsign + '>APRS,TCPIP*:' + ':' + parse_packet['from'] +' :ack'+parse_packet['msgNo'])
-    print(hotspot_callsign + '>APRS,TCPIP*:' + ':' + parse_packet['from'] +': ack'+parse_packet['msgNo'])
+    from_space = parse_packet['from']
+    AIS_send.sendall(hotspot_callsign + '>APRS,TCPIP*:' + ':' + from_space.ljust(9) + ':ack'+parse_packet['msgNo'])
+    print(hotspot_callsign + '>APRS,TCPIP*:' + ':' + from_space.ljust(9) + ':ack'+parse_packet['msgNo'])
     time.sleep(1)
-    #AIS.close()
+    AIS_send.close()
     #time.sleep(1)
 
 def aprs_send_msg(aprs_to, aprs_message_text):
@@ -291,7 +293,7 @@ def aprs_send_msg(aprs_to, aprs_message_text):
     AIS_send.sendall(aprs_message_packet)
     print(aprs_message_packet)
     #time.sleep(1)
-    #AIS.close()
+    AIS_send.close()
 
     
 def dmr_to_aprs_send(aprs_to, aprs_message_text):
@@ -319,6 +321,7 @@ def dmr_to_aprs_send(aprs_to, aprs_message_text):
                     print('Sending...')
                     print(dmr_to_aprs_message_packet)
                     AIS_send.sendall(dmr_to_aprs_message_packet)
+                    AIS_send.close()
                     break
         else:
             if len(aprs_to) < 9: 
@@ -336,26 +339,34 @@ def dmr_to_aprs_send(aprs_to, aprs_message_text):
             print('Sending...')
             AIS_send.sendall(aprs_message_packet)
             print(aprs_message_packet)
-
+            AIS_send.close()
 
     
 def aprs_location():
+    AIS_send.connect()
     location_packet = hotspot_callsign + '>APRS,TCPIP*:' + '=' + latitude + '/' + longitude + aprs_symbol + aprs_symbol_table + 'A=' + altitude + ' ' + aprs_comment
     print('Sending location packet.')
     print(location_packet)
-    AIS.sendall(location_packet)
-    
+    AIS_send.sendall(location_packet)
+    time.sleep(5)
+    AIS_send.close()    
 def aprs_beacon_1():
+    AIS_send.connect()
     beacon_1_packet = hotspot_callsign + '>APRS,TCPIP*:' + '=' + latitude + '/' + longitude + aprs_symbol + aprs_symbol_table + 'A=' + altitude + ' ' + aprs_beacon_1_comment
     print('Sending beacon 1 packet.')
     print(beacon_1_packet)
-    AIS.sendall(beacon_1_packet)
+    AIS_send.sendall(beacon_1_packet)
+    time.sleep(5)
+    AIS_send.close()
 
 def aprs_beacon_2():
+    AIS_send.connect()
     beacon_2_packet = hotspot_callsign + '>APRS,TCPIP*:' + '=' + latitude + '/' + longitude + aprs_symbol + aprs_symbol_table + 'A=' + altitude + ' ' + aprs_beacon_2_comment
     print('Sending beacon 1 packet.')
     print(beacon_2_packet)
-    AIS.sendall(beacon_2_packet)
+    AIS_send.sendall(beacon_2_packet)
+    time.sleep(5)
+    AIS_send.close()
 
 def aprs_receive_loop(packet):
     global parse_packet, aprs_message_packet, AIS_send
@@ -376,9 +387,9 @@ def aprs_receive_loop(packet):
                    if 'message_text' in parse_packet:
                             for map_line in map_read:
                                 if map_line[0] == parse_packet['addresse']:
-                                    print('yep')
-                                    print(map_line[0])
-                                    print('APRS message: ' + parse_packet['message_text'] + ' From: ' + parse_packet['from'] + 'To: ' + map_line[0])
+                                    print('yep, this is for us')
+                                    print('APRS callsign found in DMR ID map: ' + map_line[0])
+                                    print('APRS message: ' + parse_packet['message_text'] + ' From: ' + parse_packet['from'] + ' To: ' + map_line[0])
                                     # Begin ACK with APRS call of recipient
                                     print('Send ACK')
                                     time.sleep(1)
@@ -386,10 +397,12 @@ def aprs_receive_loop(packet):
                                     AIS_send.connect()
                                     time.sleep(1)
                                     print('Sending...')
-                                    AIS_send.sendall(map_line[0] + '>APRS,TCPIP*:' + ':' + parse_packet['from'] +' :ack'+parse_packet['msgNo'])
-                                    print(map_line[0] + '>APRS,TCPIP*:' + ':' + parse_packet['from'] +': ack'+parse_packet['msgNo'])
+                                    from_space = parse_packet['from']
+                                    AIS_send.sendall(map_line[0] + '>APRS,TCPIP*:' + ':' + from_space.ljust(9) +':ack'+parse_packet['msgNo'])
+                                    print(map_line[0] + '>APRS,TCPIP*:' + ':' + from_space.ljust(9) +': ack'+parse_packet['msgNo'])
                                     ### End Ack
                                     time.sleep(2)
+                                    AIS_send.close()
                                     print(time.strftime('%H:%M:%S - %m/%d/%Y'))
                                     #set to send to network or modem in config
                                     shark.do_send_sms('1', '2', '9', aprs_tg_network_reply,'APRS MSG from: ' + parse_packet['from'] + '. ' + parse_packet['message_text'])
@@ -408,10 +421,11 @@ def aprs_receive_loop(packet):
                             #AIS.connect()
                             #dmr_sms_aprs_reply = 'APRS MSG from: ' + parse_packet['from'] + '. ' + parse_packet['message_text']
                             #reply_sms(dmr_sms_aprs_reply)
-                                time.sleep(1)
+                                #time.sleep(1)
                             
                             else:
-                                    print('...')
+                                    print('Message, but not to us')
+                                    print(pak_str)
                     #else:
                      #   print('Message from: ' + parse_packet['from'] + ' To: ' + parse_packet['addresse'])
 
@@ -421,4 +435,3 @@ def aprs_receive_loop(packet):
 
 
     #################################################
-
