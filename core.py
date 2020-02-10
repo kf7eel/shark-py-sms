@@ -106,12 +106,27 @@ def reply_sms(message):
         
 
 
-def tg_sms(message):
+def tg_sms_send(message):
     global tg_sms
     print('Sending SMS to talkgroup ' + tg_sms)
     time.sleep(1)
-    shark.do_send_sms(o_sms_type, o_sms_format, tg_sms, o_sms_modem, message)
-    
+    if network_reply_mode == 1:
+        sms_modem = 0
+    if network_reply_mode == 0:
+        sms_modem = 1
+    print('Mode selected')
+    if tg_sms_all_formats == 1:
+        print('Sending in ETSI format')
+        shark.do_send_sms(o_sms_type, '0', tg_sms, sms_modem, message)
+        time.sleep(10)
+        print('Sending in UDP format')
+        shark.do_send_sms(o_sms_type, '1', tg_sms, sms_modem, message)
+        time.sleep(10)
+        print('Sending in UDP/Chinese format')
+        shark.do_send_sms(o_sms_type, '2', tg_sms, sms_modem, message)
+    if tg_sms_all_formats == 0:
+        shark.do_send_sms(o_sms_type, o_sms_format, tg_sms, sms_modem, message)
+    time.sleep(1)
 
 def email_send(to_email, email_body):
     sent_from = email_user
@@ -250,25 +265,43 @@ global AIS, aprs_message_packet
 
 aprs_message_packet = None
 
-AIS = aprslib.IS(hotspot_callsign, passwd=aprs_passcode, port=14580)
+AIS_send = aprslib.IS(hotspot_callsign, passwd=aprs_passcode,host='rotate.aprs2.net', port=14580)
 
-AIS_send = aprslib.IS(hotspot_callsign, passwd=aprs_passcode, host='rotate.aprs2.net', port=14580)
+AIS = aprslib.IS(hotspot_callsign, passwd=aprs_passcode, host=aprs_is_host, port=aprs_is_port)
+
+# YAAC TCP send function
+def yaac_aprs_tcp_send(yaac_msg_source, yaac_msg_dest, yaac_message):
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    host = yaac_host #socket.gethostname()                           
+    port = yaac_port
+# connection to hostname on the port.
+    s.connect((host, port))                               
+#msg = 'KF7EEL>KF7EEL-7:testing again...{27'+'\r'
+    yaac_msg = yaac_msg_source + '>APRS::' + yaac_msg_dest.ljust(9) + ':' + yaac_message + '{' + str(len(aprs_message_text)) + time.strftime('%s') + '\r'
+# Working packet!
+# msg = 'KF7EEL-15>APRS::KF7EEL-7 :test 23{23'+'\r'                              
+    s.send(msg.encode('ascii'))
+    s.close()
+
 
 
 def aprs_ack():
     global AIS
     print('Send ACK')
     time.sleep(1)
-    print('Connecting to APRS-IS')
-    AIS_send.connect()
-    time.sleep(1)
-    print('Sending...')
-    from_space = parse_packet['from']
-    AIS_send.sendall(hotspot_callsign + '>APRS,TCPIP*:' + ':' + from_space.ljust(9) + ':ack'+parse_packet['msgNo'])
-    print(hotspot_callsign + '>APRS,TCPIP*:' + ':' + from_space.ljust(9) + ':ack'+parse_packet['msgNo'])
-    time.sleep(1)
-    AIS_send.close()
-    #time.sleep(1)
+    if use_yaac == 0:
+        print('Connecting to APRS-IS')
+        AIS_send.connect()
+        time.sleep(1)
+        print('Sending...')
+        from_space = parse_packet['from']
+        AIS_send.sendall(hotspot_callsign + '>APRS,TCPIP*:' + ':' + from_space.ljust(9) + ':ack'+parse_packet['msgNo'])
+        print(hotspot_callsign + '>APRS,TCPIP*:' + ':' + from_space.ljust(9) + ':ack'+parse_packet['msgNo'])
+        time.sleep(1)
+        AIS_send.close()
+        #time.sleep(1)
+    if use_yaac == 1:
+        print('todo')
 
 def aprs_send_msg(aprs_to, aprs_message_text):
     global aprs_message_packet
@@ -383,8 +416,20 @@ def aprs_receive_loop(packet):
     with open(map_csv, 'rt') as map_file:
             map_read = csv.reader(map_file)
 ######
+            #if parse_packet['format'] == 'group-bulletin':
+              #  print('Bulletin Received...')
+             #   print('Bulletin from: ' + parse_packet['from'] + ' Message: ' + parse_packet['message_text'])
+
+            #if parse_packet['format'] == 'bulletin':
+            if 'bulletin' in parse_packet['format']:
+                print('Bulletin Received...')
+                print('Bulletin from: ' + parse_packet['from'] + ' Message: ' + parse_packet['message_text'])
+                tg_sms_send('Bulletin from: ' + parse_packet['from'] + ' Message: ' + parse_packet['message_text'])
+                time.sleep(3)
             if 'addresse' in parse_packet:
-                   if 'message_text' in parse_packet:
+                try:
+                   #if 'message_text' in parse_packet:
+                    if 'message' == parse_packet['format']:
                             for map_line in map_read:
                                 if map_line[0] == parse_packet['addresse']:
                                     print('yep, this is for us')
@@ -406,10 +451,10 @@ def aprs_receive_loop(packet):
                                     print(time.strftime('%H:%M:%S - %m/%d/%Y'))
                                     #set to send to network or modem in config
                                     shark.do_send_sms('1', '2', '9', aprs_tg_network_reply,'APRS MSG from: ' + parse_packet['from'] + '. ' + parse_packet['message_text'])
-                                    print('5 second reset')
-                                    time.sleep(5)
-
+                                    print('2 second reset')
+                                    time.sleep(2)
                             if hotspot_callsign == parse_packet['addresse']:
+                                print('APRS message addressed to hotspot callsign')
                                 print('APRS message: ' + parse_packet['message_text'] + ' From: ' + parse_packet['from'])
                                 aprs_ack()
                             # Send message to DMR SMS
@@ -421,13 +466,21 @@ def aprs_receive_loop(packet):
                             #AIS.connect()
                             #dmr_sms_aprs_reply = 'APRS MSG from: ' + parse_packet['from'] + '. ' + parse_packet['message_text']
                             #reply_sms(dmr_sms_aprs_reply)
-                                #time.sleep(1)
+                                time.sleep(1)
                             
                             else:
                                     print('Message, but not to us')
-                                    print(pak_str)
+                                    if 'message_text' in parse_packet:
+                                        print('Message from: ' + parse_packet['from'] + ' To: ' + parse_packet['addresse'] + ' Message: ' + parse_packet['message_text'])
+                                    else:
+                                        print(parse_packet['raw'])
+                                        
+                except (aprslib.ParseError, aprslib.UnknownFormat) as exp:
+                    print('Unable to process packet')
+                    pass
+
                     #else:
-                     #   print('Message from: ' + parse_packet['from'] + ' To: ' + parse_packet['addresse'])
+                     #   print('Message from: ' + parse_packet['from'] + ' To: ' + parse_packet['addresse'] + ' Message: ' + parse_packet['message'])
 
             else:
                 print('Packet from: ' + parse_packet['from'] + ' - ' + time.strftime('%H:%M:%S'))

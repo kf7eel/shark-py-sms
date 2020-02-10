@@ -28,11 +28,14 @@ from core import *
 
 global AIS
 
-AIS = aprslib.IS(hotspot_callsign, passwd=aprs_passcode, port=14580)
+AIS = aprslib.IS(hotspot_callsign, host=aprs_is_host, passwd=aprs_passcode, port=aprs_is_port)
 #print(hotspot_callsign + '>APRS,TCPIP*:' + '=' + latitude + '/' + longitude + '</A' + altitude + ' ' + aprs_comment)
 
 AIS.set_filter(aprs_filter)
 AIS.connect()
+
+    #AIS.sendall("user " + hotspot_callsign + " pass " + aprs_passcode + " vers APRSlib filter m/100 r/47.436/-120.327/100")
+    
 
 #print(location_packet)
 #AIS.sendall(location_packet)
