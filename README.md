@@ -8,7 +8,12 @@ This will work with Openspot firmware 0101 or later as all versions after 0101 u
 
 # See Wiki for more info.
 ----
-### 1/29/2020
+### 2/10/2020
+I have updated the code. Made several stability improvements and added the ability to send bullitens received on APRS to a talk group.
+
+I have also made the decision to focus the more innovative developement and features to an Interactive APRS script. APRS is more widely used, easier to implement due to the open standards, and is used on multiple platform, from D-Star to some DMR networks, and online. In terms of APRS, the focus going in this project will be more towards stability improvements with "bridging" APRS to DMR SMS. In other words, some functions will be moved to the Interactive APRS script, such as the E-Mail gateway and planned information services, such as weather. Not to fear though, there will still be plenty of work on additional features here.
+
+#### 1/29/2020
 
 I managed to track down the original author of the python script that communicates via API. He gave me permission to include the script with this project. This will make it significantly easier to setup. Thanks to Scott, KD0KKV, the original author of the python API script that made this project possible (Original found at https://github.com/battlehax/shark-py).
 
@@ -161,3 +166,7 @@ This script will check for moderate, severe, or extreme weather alerts and send 
 Setting this up to send to a talk group will allow multiple users to receive severe weather alerts.
 
 Requires the python module WeatherAlerts. https://weatheralerts.readthedocs.io/en/latest/about.html
+
+----
+
+### Automatic Packet Reporting System (APRS) was invented and is trademarked by Bob Bruninga, WB4APR.
