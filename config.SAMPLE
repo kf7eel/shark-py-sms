@@ -49,13 +49,25 @@ talkgroup_reply_mode = 0
 # Determines if openspot will process SMS from network, sent to hotspot_id
 incoming_network_messages = network_reply_mode
 
-# Talk group SMS. Set this to send a message to a talk group. Used in tg_sms function.
+# Talk group SMS. Set this to send a message to a talk group. Used in tg_sms function. TG sms all types will send 3 different sms messages
+# to each of the three SMS types that openspot supports, 1 = enabled, 0 = disabled
 tg_sms = '9'
+tg_sms_all_formats = 1
 
 
 #############################----APRS----######################################
 # Callsign and SSID
 hotspot_callsign = 'Insert your Callsign with SSID (EXAMPLE: N0CALL-10'
+
+# APRS host, default rotate.aprs.net
+aprs_is_host = 'rotate.aprs.net'
+aprs_is_port = 14580
+
+# Use YAAC to send APRS messages, 0 = off, 1 = on
+use_yaac = 0
+
+yaac_host = 'localhost'
+yaac_port = 8010
 
 # APRS-IS passcode
 aprs_passcode = 'APRS Passcode'
