@@ -8,7 +8,14 @@ This will work with Openspot firmware 0101 or later as all versions after 0101 u
 
 # See Wiki for more info.
 ----
-### 2/10/2020
+### 4/19/2020
+Add ability to manage DMR ID to APRS callsign.
+You can now send an SMS to add your radio DMR ID to the APRS callsign map.
+"ADD-[your call with SSID]" will associate your DMR ID to your APRS callsign. All APRS messages sent to the call you entered will now be sent to your DMR radio, and all APRS messages sent from you DMR radio will have your APRS callsign.
+
+"DEL-[your call wil SSID]" will remove your radio from the internal database.
+
+#### 2/10/2020
 I have updated the code. Made several stability improvements and added the ability to send bullitens received on APRS to a talk group.
 
 I have also made the decision to focus the more innovative developement and features to an Interactive APRS script. APRS is more widely used, easier to implement due to the open standards, and is used on multiple platform, from D-Star to some DMR networks, and online. In terms of APRS, the focus going in this project will be more towards stability improvements with "bridging" APRS to DMR SMS. In other words, some functions will be moved to the Interactive APRS script, such as the E-Mail gateway and planned information services, such as weather. Not to fear though, there will still be plenty of work on additional features here.
